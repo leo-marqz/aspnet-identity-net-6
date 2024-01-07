@@ -12,7 +12,7 @@
             <h3 class="text-center fw-normal">INICIAR SESSION</h3>
         </div>
         <div class="card-body">
-            <form asp-controller="accounts" asp-action="signin" method="post" class="row">
+            <form asp-controller="accounts" asp-action="signin" asp-route-returnurl="@ViewData["returnURL"]" method="post" class="row">
                 <div class="text-danger" role="alert" asp-validation-summary="ModelOnly"></div>
                 <div class="col-md-3"></div>
                 <div class="col-md-6">

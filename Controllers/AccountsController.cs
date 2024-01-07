@@ -3,6 +3,7 @@ using ASPNetIdentity.Models;
 using ASPNetIdentity.Models.Views;
 using ASPNetIdentity.Utilities;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -33,34 +34,55 @@ namespace ASPNetIdentity.Controllers
             _roleManager = roleManager;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string returnurl=null)
         {
+            ViewData["returnURL"] = returnurl;
             return View();
         }
 
         [HttpGet("SignIn")]
-        public IActionResult SignIn(){
+        public IActionResult SignIn(string returnurl=null){
+            ViewData["returnURL"] = returnurl;
             var model = new SignIn();
             return View(model);
         }
 
         [HttpPost("SignIn")]
-        public IActionResult SignIn(SignIn signIn){
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SignIn(SignIn signIn, string returnurl=null){
+            ViewData["returnURL"] = returnurl;
+
+            returnurl = returnurl ?? Url.Content("~/");
+
             if(!ModelState.IsValid){
                 return View();
             }
 
-            return Redirect("Home");
+            var response = await _signInManager.PasswordSignInAsync(signIn.Email, signIn.Password, signIn.RememberMe, lockoutOnFailure: false);
+            
+            if(response.Succeeded){
+                return LocalRedirect(returnurl);
+            }
+
+            ModelState.AddModelError(string.Empty, "Acceso Invalido!");
+
+            return View();
         }
 
         [HttpGet("SignUp")]
-        public IActionResult SignUp(){
+        public IActionResult SignUp(string returnurl=null){
+            ViewData["returnURL"] = returnurl;
             var model = new SignUp();
             return View(model);
         }
 
         [HttpPost("SignUp")]
-        public async Task<IActionResult> SignUp(SignUp signup){
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SignUp(SignUp signup, string returnurl=null){
+            ViewData["returnURL"] = returnurl;
+
+            returnurl = returnurl ?? Url.Content("~/");
+
             if(!ModelState.IsValid){
                 return View();
             }
@@ -71,7 +93,7 @@ namespace ASPNetIdentity.Controllers
 
             if(response.Succeeded){
                 await _signInManager.SignInAsync(user, isPersistent: true);
-                return RedirectToAction("Index", "Home");
+                return LocalRedirect(returnurl);
             }
             
             //mapea errores para que sean mostrados en la vista, 
@@ -79,6 +101,23 @@ namespace ASPNetIdentity.Controllers
             response.ErrorMapper(ModelState);
 
             return View();
+        }
+
+        [HttpPost("SignOut")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SignOut(){
+            await _signInManager.SignOutAsync();
+            return RedirectToAction("signin", "accounts");
+        }
+
+        [HttpGet("Profile")]
+        [Authorize]
+        public async Task<IActionResult> Profile(string returnUrl=null){
+            ViewData["returnURL"] = returnUrl;
+
+            var email = User.Identity.Name.ToString();
+            User user = await _userManager.FindByEmailAsync(email);
+            return View(user);
         }
     }
 }

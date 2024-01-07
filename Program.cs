@@ -22,6 +22,9 @@ internal class Program
         builder.Services.AddAuthentication();
         builder.Services.AddRouting(options=>options.LowercaseUrls= true);
         builder.Services.AddAutoMapper(typeof(Program));
+        builder.Services.ConfigureApplicationCookie(opt=>{
+            opt.LoginPath = new Microsoft.AspNetCore.Http.PathString("/accounts/signin");
+        });
 
         builder.Services.AddControllersWithViews();
 

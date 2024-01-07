@@ -18,7 +18,7 @@ namespace ASPNetIdentity.Utilities
                     source.MapFrom(here=>here.Password);
                 })
                 .ForMember(destination=>destination.UserName, source=>{
-                    source.MapFrom(with=>with.Name.Split(" ", StringSplitOptions.None)[0]);
+                    source.MapFrom(with=>with.Email);
                 });
         }
     }

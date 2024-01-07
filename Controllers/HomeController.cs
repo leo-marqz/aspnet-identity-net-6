@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ASPNetIdentity.Models;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ASPNetIdentity.Controllers;
 
@@ -14,11 +15,13 @@ public class HomeController : Controller
         _logger = logger;
     }
 
+    [Authorize]
     public IActionResult Index()
     {
         return View();
     }
 
+    [Authorize]
     public IActionResult Privacy()
     {
         return View();
