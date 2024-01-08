@@ -1,3 +1,4 @@
+using System;
 using ASPNetIdentity.Data;
 using ASPNetIdentity.Models;
 using ASPNetIdentity.Utilities;
@@ -7,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 
 internal class Program
 {
@@ -18,12 +20,29 @@ internal class Program
         //SERVICES
         //======================================
         builder.Services.AddDbContext<ApplicationDBContext>(otp => otp.UseSqlServer(builder.Configuration.GetConnectionString("SQLServerString")));
+        
+        //servicio de identity para la aplicacion
         builder.Services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<ApplicationDBContext>().AddDefaultTokenProviders();
         builder.Services.AddAuthentication();
+
+        //mapea los endpoint en minusculas
         builder.Services.AddRouting(options=>options.LowercaseUrls= true);
         builder.Services.AddAutoMapper(typeof(Program));
+
+        //configuracion para url de retorno
         builder.Services.ConfigureApplicationCookie(opt=>{
+            //configuracion para url de retorno
             opt.LoginPath = new Microsoft.AspNetCore.Http.PathString("/accounts/signin");
+            opt.AccessDeniedPath = new Microsoft.AspNetCore.Http.PathString("/accounts/denied");
+        });
+
+        //opciones de configuracion de identity
+        builder.Services.Configure<IdentityOptions>(opt=>{
+            opt.Password.RequiredLength = 4;
+            opt.Password.RequireLowercase = true;
+            opt.Password.RequireUppercase = true;
+            opt.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+            opt.Lockout.MaxFailedAccessAttempts = 3;
         });
 
         builder.Services.AddControllersWithViews();

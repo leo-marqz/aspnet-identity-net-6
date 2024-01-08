@@ -64,6 +64,10 @@ namespace ASPNetIdentity.Controllers
                 return LocalRedirect(returnurl);
             }
 
+            if(response.IsLockedOut){
+                return View("Locked");
+            }
+
             ModelState.AddModelError(string.Empty, "Acceso Invalido!");
 
             return View();
@@ -118,6 +122,18 @@ namespace ASPNetIdentity.Controllers
             var email = User.Identity.Name.ToString();
             User user = await _userManager.FindByEmailAsync(email);
             return View(user);
+        }
+
+        [HttpGet("ForgotPassword")]
+        public IActionResult ForgotPassword(){
+            var fPassword = new ForgotPassword();
+            return View(fPassword);
+        }
+
+        [HttpPost("ForgotPassword")]
+        public async Task<IActionResult> ForgotPassword(ForgotPassword forgotPassword)
+        {
+            return Ok();
         }
     }
 }
