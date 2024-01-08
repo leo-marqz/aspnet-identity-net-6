@@ -131,9 +131,10 @@ namespace ASPNetIdentity.Controllers
         }
 
         [HttpPost("ForgotPassword")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ForgotPassword(ForgotPassword forgotPassword)
         {
-            return Ok();
+            return View("ConfirmSendEmailForgotPassword");
         }
     }
 }

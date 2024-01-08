@@ -18,6 +18,10 @@ build_property.GenerateRazorMetadataSourceChecksumAttributes =
 build_property.MSBuildProjectDirectory = D:\projects\net\ASPNetIdentity
 build_property._RazorSourceGeneratorDebug = 
 
+[D:/projects/net/ASPNetIdentity/Views/Accounts/ConfirmSendEmailForgotPassword.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudHNcQ29uZmlybVNlbmRFbWFpbEZvcmdvdFBhc3N3b3JkLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/projects/net/ASPNetIdentity/Views/Accounts/Denied.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudHNcRGVuaWVkLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
